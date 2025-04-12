@@ -1,4 +1,4 @@
-from escola.serializers import EstudanteSerializer, CursoSerializer, MatriculaSerializer, ListaMatriculasCursoSerializer, ListaMatriculasEstudanteSerializer
+from escola.serializers import EstudanteSerializer, CursoSerializer, MatriculaSerializer, ListaMatriculasCursoSerializer, ListaMatriculasEstudanteSerializer, EstudanteSerializerV2
 from escola.models import Estudante, Curso, Matricula
 from rest_framework import viewsets, generics, filters
 from django_filters.rest_framework import DjangoFilterBackend
@@ -10,10 +10,18 @@ from django_filters.rest_framework import DjangoFilterBackend
 # A única coisa que precisamos fazer é definir a queryset e o serializer_class.
 class EstudanteViewSet(viewsets.ModelViewSet):
     queryset = Estudante.objects.all()
-    serializer_class = EstudanteSerializer
+    #serializer_class = EstudanteSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     ordering_fields = ['nome']
     filterset_fields = ['nome', 'cpf']
+    #esta função é responsável por definir qual serializer será utilizado de acordo com a versão da API que está sendo utilizada.
+    # A versão da API é definida na URL, por exemplo: /api/v1/estudantes/ ou /api/v2/estudantes/
+    # A função get_serializer_class verifica a versão da API e retorna o serializer correspondente.
+    def get_serializer_class(self):
+        if self.request.version == 'v2':
+            return EstudanteSerializerV2
+        return EstudanteSerializer
+
 
 class CursoViewSet(viewsets.ModelViewSet):
     queryset = Curso.objects.all()

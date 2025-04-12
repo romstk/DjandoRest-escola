@@ -51,3 +51,9 @@ class ListaMatriculasCursoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Matricula    
         fields = ['estudante_nome']
+
+# Serializer para versão 2. Esse novo endpoint deverá conter apenas os campos de ‘id',  ‘nome’, ‘email’ e ‘celular’ dos Estudantes
+class EstudanteSerializerV2(serializers.ModelSerializer):
+    class Meta:
+        model = Estudante
+        fields = ['id','nome','email', 'celular']
