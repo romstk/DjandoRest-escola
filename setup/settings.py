@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'escola',
     'rest_framework',
     'django_filters',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -129,16 +130,41 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Configuração do REST_FRAMEWORK para autencicação
 # Definindo a autenticação como BasicAuthentication e a permissão como IsAuthenticated  
 REST_FRAMEWORK = {
-
+    # Nesta aplicação definimos que todos os acessos deverão ser fetios por usuário autenticado, então definimos direto aqui no settings.py, caso queira personalizar posso criar permissões dentro da cada view. 
+    # Configuração de autenticação
+    # Isso significa que a autenticação será feita usando o BasicAuthentication e a SessionAuthentication.
+    # BasicAuthentication é um método de autenticação simples que usa o nome de usuário e a senha do usuário.
+    # SessionAuthentication é um método de autenticação que usa a sessão do usuário para autenticar o usuário.
+    # Isso significa que o usuário deve estar autenticado para acessar a API.
+   
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
+    # Configuração de permissão
+    # Isso significa que apenas usuários autenticados podem acessar a API.
+    # Se você quiser permitir que usuários anônimos acessem a API, você pode usar a permissão IsAuthenticatedOrReadOnly.
+    # Isso significa que usuários anônimos podem acessar a API, mas apenas para métodos de leitura (GET, HEAD, OPTIONS).
+    # Para métodos de escrita (POST, PUT, PATCH, DELETE), eles precisam estar autenticados.
+    # Vamos definir as permissões de usuário para que as permissões sejam as concedidas no Django Admin para cada usuário
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.DjangoModelPermissions',
     ],
     # Configuração de paginação
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
-    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.QueryParameterVersioning'
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.QueryParameterVersioning',
+
+    # Configurando o throttle, limites de requisições  
+    # Isso é útil para evitar que um usuário faça muitas requisições em um curto período de tempo. 
+    # Por exemplo, se você quiser limitar um usuário a 100 requisições por dia, você pode usar o seguinte código:    
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    # Definindo os limites de requisições por usuários logados e anônimos    
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '20/day',
+        'user': '50/day'
+    }
 }
